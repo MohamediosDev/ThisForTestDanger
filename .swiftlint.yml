@@ -1,0 +1,69 @@
+disabled_rules:
+  - colon
+  - fallthrough
+  - force_cast
+  - function_parameter_count
+  - line_length
+  - nesting
+  - trailing_whitespace
+  - unused_optional_binding
+  - void_return
+  - xctfail_message
+  - large_tuple
+  - type_name
+  - identifier_name
+  - inclusive_language
+  - todo
+  - function_body_length
+  - generic_type_name
+  - blanket_disable_command
+
+opt_in_rules:
+  - closure_end_indentation
+  - closure_spacing
+  - contains_over_first_not_nil
+  - empty_count
+  - explicit_init
+  - first_where
+  - literal_expression_end_indentation
+  - operator_usage_whitespace
+  - overridden_super_call
+  - private_outlet
+  - prohibited_super_call
+  - redundant_nil_coalescing
+  - single_test_class
+  - sorted_first_last
+  - strict_fileprivate
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+
+included:
+  - Tests
+
+excluded:
+  - ../**/.build
+  - ../**/.swiftpm
+
+file_length:
+  warning: 350
+  error: 600
+
+identifier_name:
+  min_length:
+    warning: 2
+
+private_outlet:
+  allow_private_set: true
+
+custom_rules:
+  unnecessary_newline:
+    name: "Unnecessary Newline"
+    regex: "(func|var|class|struct|extension|protocol|enum)[^\n]+\\{\n(\\s?)*\n"
+    message: "Newlines on the beginning should be avoided"
+  replace_xctassertequal:
+    name: "Detected XCTAssertEqual"
+    regex: "(XCTAssertEqual)"
+    message: "Use assertEqual from DroidsTestUtils"
+  replace_navigationBarHidden:
+    name: "Detected navigationBarHidden"
+    regex: ".navigationBarHidden"
