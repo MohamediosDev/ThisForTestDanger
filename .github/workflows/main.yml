@@ -12,4 +12,4 @@ jobs:
       - name: Danger
         uses: 417-72KI/danger-swiftlint@v5.9 # Look at the `Note for version`
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
