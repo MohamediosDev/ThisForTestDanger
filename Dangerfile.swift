@@ -1,6 +1,5 @@
 import Danger 
 import Foundation
-import DangerSwiftCoverage
 
 let danger = Danger()
 let editedFiles = danger.git.modifiedFiles + danger.git.createdFiles
@@ -63,13 +62,3 @@ func checkCodeCoverage(filePath: String, threshold: Double) {
         message("Code coverage is good at \(coverage)%")
     }
 }
-
-// Example path to coverage file and coverage threshold
-let coverageFilePath = "path/to/coverage.json"
-let coverageThreshold = 80.0
-
-checkCodeCoverage(filePath: coverageFilePath, threshold: coverageThreshold)
-let report = XCodeSummary(filePath: "result.json")
-report.report()
-
-Coverage.xcodeBuildCoverage(.derivedDataFolder("build"), minimumCoverage: 50, excludedTargets: ["DangerSwiftCoverageTests.xctest"])
