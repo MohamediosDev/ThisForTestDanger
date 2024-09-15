@@ -1,7 +1,6 @@
 import Danger 
 import Foundation
 import DangerSwiftCoverage
-import DangerXCodeSummary
 
 let danger = Danger()
 let editedFiles = danger.git.modifiedFiles + danger.git.createdFiles
