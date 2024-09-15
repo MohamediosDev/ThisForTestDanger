@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import ThisForTestDanger
+import ThisForTestDanger
 
 final class ThisForTestDangerTests: XCTestCase {
 
