@@ -2,63 +2,31 @@ import Danger
 import Foundation
 
 let danger = Danger()
-let editedFiles = danger.git.modifiedFiles + danger.git.createdFiles
 
-// 1. Big PR warning
-if editedFiles.count - danger.git.deletedFiles.count > 300 {
+// fileImport: DangerfileExtensions/ChangelogCheck.swift
+
+if danger.git.createdFiles.count + danger.git.modifiedFiles.count - danger.git.deletedFiles.count > 300 {
     warn("Big PR, try to keep changes smaller if you can")
 }
 
-// 2. PR Description Warning
-let body = danger.github.pullRequest.body?.count ?? 0
-let linesOfCode = danger.github.pullRequest.additions ?? 0
-if body < 3 && linesOfCode > 10 {
-    warn("Please provide a summary in the Pull Request description")
+let swiftFilesWithCopyright = danger.git.createdFiles.filter {
+    $0.fileType == .swift
+        && danger.utils.readFile($0).contains("//  Created by")
 }
 
-// 3. Large PR changes warning
-let additions = danger.github.pullRequest.additions ?? 0
-let deletions = danger.github.pullRequest.deletions ?? 0
-let totalChanges = additions + deletions
-
-if totalChanges > 500 {
-    warn("Large PR with over 500 lines changed. Consider breaking it down into smaller PRs.")
+if !swiftFilesWithCopyright.isEmpty {
+    let files = swiftFilesWithCopyright.joined(separator: ", ")
+    warn("In Danger JS we don't include copyright headers, found them in: \(files)")
 }
 
-// 4. Special check for important files
-let importantFiles = editedFiles.filter { $0.contains("Config.swift") || $0.contains(".env") }
+let filesToLint = (danger.git.modifiedFiles + danger.git.createdFiles).filter { !$0.contains("Documentation/") }
 
-if !importantFiles.isEmpty {
-    warn("You have modified configuration files. Please ensure they are reviewed carefully.")
-}
+SwiftLint.lint(.files(filesToLint), inline: true)
 
-// 5. WIP Warning
+// Support running via `danger local`
 if danger.github != nil {
+    // These checks only happen on a PR
     if danger.github.pullRequest.title.contains("WIP") {
         warn("PR is classed as Work in Progress")
-    }
-}
-
-// 6. Run SwiftLint only on Swift files
-let swiftFiles = editedFiles.filter { $0.hasSuffix(".swift") }
-
-if !swiftFiles.isEmpty {
-    print("Running SwiftLint on changed Swift files...")
-    SwiftLint.lint(.files(swiftFiles), inline: true, strict: true, quiet: false)
-}
-
-// 7. Code coverage check
-func checkCodeCoverage(filePath: String, threshold: Double) {
-    guard let data = FileManager.default.contents(atPath: filePath),
-          let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-          let coverage = json["coverage"] as? Double else {
-        warn("Could not retrieve code coverage data.")
-        return
-    }
-    
-    if coverage < threshold {
-        warn("Code coverage is below the acceptable threshold (\(threshold)%) at \(coverage)%")
-    } else {
-        message("Code coverage is good at \(coverage)%")
     }
 }
